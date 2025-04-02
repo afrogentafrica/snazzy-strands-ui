@@ -2,7 +2,8 @@
 import React from "react";
 import { Home, MapPin, CalendarCheck, User, Search } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { useLocation } from "react-router-dom";
+import { useLocation, Link } from "react-router-dom";
+import { useAuth } from "@/contexts/AuthContext";
 
 type LayoutProps = {
   children: React.ReactNode;
@@ -11,6 +12,7 @@ type LayoutProps = {
 
 const Layout = ({ children, hideNav = false }: LayoutProps) => {
   const location = useLocation();
+  const { user } = useAuth();
   const isActive = (path: string) => location.pathname === path;
 
   return (
@@ -31,8 +33,16 @@ const Layout = ({ children, hideNav = false }: LayoutProps) => {
             href="/search"
             className="mb-4"
           />
-          <NavItem icon={<CalendarCheck className="w-5 h-5" />} isActive={isActive("/appointments")} href="/appointments" />
-          <NavItem icon={<User className="w-5 h-5" />} isActive={isActive("/profile")} href="/profile" />
+          <NavItem 
+            icon={<CalendarCheck className="w-5 h-5" />} 
+            isActive={isActive("/appointments")} 
+            href={user ? "/appointments" : "/login"} 
+          />
+          <NavItem 
+            icon={<User className="w-5 h-5" />} 
+            isActive={isActive("/profile")} 
+            href={user ? "/profile" : "/login"} 
+          />
         </nav>
       )}
     </div>
@@ -47,8 +57,8 @@ type NavItemProps = {
 };
 
 const NavItem = ({ icon, isActive, href, className }: NavItemProps) => (
-  <a
-    href={href}
+  <Link
+    to={href}
     className={cn(
       "w-10 h-10 rounded-full flex items-center justify-center transition-colors",
       isActive ? "text-barber-accent" : "text-gray-500 hover:text-gray-300",
@@ -56,7 +66,7 @@ const NavItem = ({ icon, isActive, href, className }: NavItemProps) => (
     )}
   >
     {icon}
-  </a>
+  </Link>
 );
 
 export default Layout;
