@@ -1,31 +1,14 @@
 
 import { createClient } from '@supabase/supabase-js';
 
-// Check if the environment variables are defined
-const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
-const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
-
-if (!supabaseUrl) {
-  console.error(
-    "Supabase URL is missing! Make sure VITE_SUPABASE_URL is set in your environment variables."
-  );
-  // Using a placeholder URL to prevent immediate crashes, but the app won't function correctly
-  // This allows the app to at least render an error message to the user
-}
-
-if (!supabaseAnonKey) {
-  console.error(
-    "Supabase Anon Key is missing! Make sure VITE_SUPABASE_ANON_KEY is set in your environment variables."
-  );
-}
+// Use the provided Supabase URL and anon key
+const supabaseUrl = "https://irwoefmbkcozwbgpfxxz.supabase.co";
+const supabaseAnonKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imlyd29lZm1ia2NvendiZ3BmeHh6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDM0MjgxNDYsImV4cCI6MjA1OTAwNDE0Nn0.ndW5aFWhFdb5l5XUElSRo8jCnuKuA5xf8H4wtDg65zg";
 
 // Create the Supabase client
-export const supabase = createClient(
-  supabaseUrl || "https://placeholder-url.supabase.co",
-  supabaseAnonKey || "placeholder-key"
-);
+export const supabase = createClient(supabaseUrl, supabaseAnonKey);
 
 // Export a function to check if Supabase is properly configured
 export const isSupabaseConfigured = () => {
-  return !!supabaseUrl && !!supabaseAnonKey;
+  return true; // We now have hardcoded values, so it's always configured
 };
