@@ -1,13 +1,18 @@
 
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { MapPin, ArrowLeft, ChevronRight } from "lucide-react";
 import Layout from "@/components/layout/Layout";
-import DateSelector from "@/components/booking/DateSelector";
-import TimeSelector from "@/components/booking/TimeSelector";
 import { supabase } from "@/lib/supabase";
 import { useAuth } from "@/contexts/AuthContext";
 import { useToast } from "@/hooks/use-toast";
+
+// Import new components
+import BookingHeader from "@/components/booking/BookingHeader";
+import ServiceSelector from "@/components/booking/ServiceSelector";
+import BookingSlots from "@/components/booking/BookingSlots";
+import BookingButton from "@/components/booking/BookingButton";
+import LoadingState from "@/components/booking/LoadingState";
+import NotFoundState from "@/components/booking/NotFoundState";
 
 type Barber = {
   id: string;
@@ -159,123 +164,38 @@ const Booking = () => {
   };
 
   if (isLoading) {
-    return (
-      <Layout hideNav>
-        <div className="p-6 flex justify-center items-center h-screen">
-          <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-barber-accent"></div>
-        </div>
-      </Layout>
-    );
+    return <LoadingState />;
   }
 
   if (!barber) {
-    return (
-      <Layout hideNav>
-        <div className="p-6 text-center">
-          <h2 className="text-xl font-bold mb-4">Barber not found</h2>
-          <button 
-            onClick={() => navigate("/")} 
-            className="barber-button"
-          >
-            Go Back Home
-          </button>
-        </div>
-      </Layout>
-    );
+    return <NotFoundState />;
   }
 
   return (
     <Layout hideNav>
       <div className="p-6">
-        {/* Header */}
-        <div className="flex items-center justify-between mb-6">
-          <button 
-            onClick={() => navigate(-1)} 
-            className="p-2 rounded-full bg-barber-card"
-          >
-            <ArrowLeft className="w-5 h-5" />
-          </button>
-          <h1 className="font-bold text-xl">Book Now</h1>
-          <div className="w-9"></div> {/* Empty div for flex spacing */}
-        </div>
-
-        {/* Barber Info */}
-        <div className="flex items-center gap-3 p-4 bg-barber-card rounded-2xl mb-6">
-          <div className="w-12 h-12 rounded-full overflow-hidden">
-            <img
-              src={barber.image}
-              alt={barber.name}
-              className="w-full h-full object-cover"
-            />
-          </div>
-          <div>
-            <h2 className="font-bold">{barber.name}</h2>
-            <div className="flex items-center text-xs text-gray-400">
-              <MapPin className="w-3 h-3 mr-1" />
-              <span>{barber.location}</span>
-            </div>
-          </div>
-        </div>
-
-        {/* Service Selection */}
-        {barber.services && barber.services.length > 0 && (
-          <div className="mb-6">
-            <h2 className="font-bold text-lg mb-2">Select Service</h2>
-            <div className="grid grid-cols-1 gap-2">
-              {barber.services.map((service) => (
-                <div 
-                  key={service.id}
-                  onClick={() => setSelectedService(service)}
-                  className={`p-3 rounded-xl border-2 cursor-pointer transition-all ${
-                    selectedService?.id === service.id
-                      ? "border-barber-accent bg-barber-accent/10"
-                      : "border-barber-card bg-barber-card"
-                  }`}
-                >
-                  <div className="flex justify-between items-center">
-                    <div>
-                      <p className="font-medium">{service.name}</p>
-                      <p className="text-xs text-gray-400">{service.duration} min</p>
-                    </div>
-                    <div className="text-lg font-bold">${service.price}</div>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        )}
-
-        {/* Booking Section */}
-        <div className="bg-barber-card rounded-3xl p-5 mb-6">
-          <h2 className="font-bold text-lg mb-2">Available Slots</h2>
-          <div className="mb-2 text-sm text-gray-400">Select Date</div>
-          
-          {/* Date selector */}
-          <DateSelector
-            selectedDate={selectedDate}
-            setSelectedDate={setSelectedDate}
-            dates={AVAILABLE_DATES}
-          />
-
-          {/* Time selector */}
-          <TimeSelector
-            selectedTime={selectedTime}
-            setSelectedTime={setSelectedTime}
-            availableTimes={AVAILABLE_TIMES}
-          />
-        </div>
-
-        {/* Confirm Button */}
-        <button
-          onClick={handleBooking}
-          disabled={isSubmitting || !selectedService}
-          className={`barber-button w-full justify-center mt-4 ${
-            (!selectedService || isSubmitting) ? "opacity-50 cursor-not-allowed" : ""
-          }`}
-        >
-          {isSubmitting ? "Processing..." : "Confirm Booking"}
-          <ChevronRight className="w-5 h-5" />
-        </button>
+        <BookingHeader barber={barber} />
+        
+        <ServiceSelector
+          services={barber.services}
+          selectedService={selectedService}
+          setSelectedService={setSelectedService}
+        />
+        
+        <BookingSlots
+          selectedDate={selectedDate}
+          setSelectedDate={setSelectedDate}
+          selectedTime={selectedTime}
+          setSelectedTime={setSelectedTime}
+          availableDates={AVAILABLE_DATES}
+          availableTimes={AVAILABLE_TIMES}
+        />
+        
+        <BookingButton
+          onBooking={handleBooking}
+          isSubmitting={isSubmitting}
+          isDisabled={!selectedService}
+        />
       </div>
     </Layout>
   );
