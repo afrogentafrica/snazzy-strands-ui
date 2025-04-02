@@ -1,34 +1,110 @@
 
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { useParams, useNavigate, Link } from "react-router-dom";
 import { MapPin, Star, ArrowLeft } from "lucide-react";
 import Layout from "@/components/layout/Layout";
 import ServiceCard from "@/components/barber/ServiceCard";
+import { supabase } from "@/lib/supabase";
+import { useToast } from "@/hooks/use-toast";
 
-const BARBER_DATA = {
-  id: "1",
-  name: "Allen Markel",
-  image: "/lovable-uploads/c7fe7ee0-59e6-4444-86c5-fd295774ad61.png",
-  location: "Old Cutler Rd, Cutler Bay",
-  rating: 4.3,
-  services: [
-    { name: "Hair Cut", price: "20.99", isPopular: true },
-    { name: "Beard", price: "15.99" },
-    { name: "Shampoo", price: "10.99" },
-    { name: "Hair Color", price: "25.99" },
-    { name: "Kids Cut", price: "15.99" },
-    { name: "Buzz Cut", price: "18.99" },
-  ],
-  description:
-    "Barbers benefit from skilled hand-eye coordination when making precise cuts and adding color to hair. In services that require blades, shears and...",
+type Barber = {
+  id: string;
+  name: string;
+  image: string;
+  location: string;
+  rating: number;
+  description: string;
+  services?: Service[];
+};
+
+type Service = {
+  id: string;
+  name: string;
+  price: string;
+  is_popular: boolean;
 };
 
 const BarberDetail = () => {
   const { id } = useParams();
   const navigate = useNavigate();
+  const { toast } = useToast();
+  const [barber, setBarber] = useState<Barber | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
 
-  // In a real app, we would fetch the barber data based on the id
-  const barber = BARBER_DATA;
+  useEffect(() => {
+    if (!id) return;
+
+    const fetchBarber = async () => {
+      setIsLoading(true);
+      
+      try {
+        // Fetch barber details
+        const { data: barberData, error: barberError } = await supabase
+          .from("barbers")
+          .select("*")
+          .eq("id", id)
+          .single();
+
+        if (barberError) throw barberError;
+
+        // Fetch barber services
+        const { data: servicesData, error: servicesError } = await supabase
+          .from("services")
+          .select("*")
+          .eq("barber_id", id);
+
+        if (servicesError) throw servicesError;
+
+        // Format prices for display
+        const services = servicesData?.map(service => ({
+          ...service,
+          price: service.price.toString()
+        }));
+
+        setBarber({
+          ...barberData,
+          services
+        });
+      } catch (error) {
+        console.error("Error fetching barber:", error);
+        toast({
+          title: "Error",
+          description: "Could not load barber information.",
+          variant: "destructive",
+        });
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchBarber();
+  }, [id, toast]);
+
+  if (isLoading) {
+    return (
+      <Layout hideNav>
+        <div className="p-6 flex justify-center items-center h-screen">
+          <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-barber-accent"></div>
+        </div>
+      </Layout>
+    );
+  }
+
+  if (!barber) {
+    return (
+      <Layout hideNav>
+        <div className="p-6 text-center">
+          <h2 className="text-xl font-bold mb-4">Barber not found</h2>
+          <button 
+            onClick={() => navigate("/")} 
+            className="barber-button"
+          >
+            Go Back Home
+          </button>
+        </div>
+      </Layout>
+    );
+  }
 
   return (
     <Layout hideNav>
@@ -71,12 +147,12 @@ const BarberDetail = () => {
           <div className="mt-6">
             <h2 className="text-lg font-bold mb-3">Services</h2>
             <div className="grid grid-cols-2 gap-3">
-              {barber.services.map((service, index) => (
+              {barber.services && barber.services.map((service) => (
                 <ServiceCard
-                  key={index}
+                  key={service.id}
                   name={service.name}
                   price={service.price}
-                  isPopular={service.isPopular}
+                  isPopular={service.is_popular}
                 />
               ))}
             </div>

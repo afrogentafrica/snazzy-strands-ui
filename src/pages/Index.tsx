@@ -1,42 +1,60 @@
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Layout from "@/components/layout/Layout";
 import FilterTabs from "@/components/barber/FilterTabs";
 import BarberCard from "@/components/barber/BarberCard";
+import { supabase } from "@/lib/supabase";
+import { useToast } from "@/hooks/use-toast";
 
-const BARBER_DATA = [
-  {
-    id: "1",
-    name: "Allen Markel",
-    image: "/lovable-uploads/c7fe7ee0-59e6-4444-86c5-fd295774ad61.png",
-    location: "Old Cutler Rd, Cutler Bay",
-    specialty: "Precision Cuts",
-  },
-  {
-    id: "2",
-    name: "Nohita Kneet",
-    image: "https://images.unsplash.com/photo-1617481123070-9092b2f4518e?q=80&w=2670&auto=format&fit=crop",
-    location: "Downtown Miami",
-    specialty: "Hair Stylist",
-  },
-  {
-    id: "3",
-    name: "Mike Stevens",
-    image: "https://images.unsplash.com/photo-1622296089403-47b0b49551fc?q=80&w=2670&auto=format&fit=crop",
-    location: "Brickell Ave",
-    specialty: "Beard Specialist",
-  },
-];
+type Barber = {
+  id: string;
+  name: string;
+  image: string;
+  location: string;
+  specialty?: string;
+};
 
 const FILTERS = ["All", "Hair", "Beard", "Color", "Styling"];
 
 const Index = () => {
   const [activeFilter, setActiveFilter] = useState("All");
+  const [barbers, setBarbers] = useState<Barber[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const { toast } = useToast();
   const [user] = useState({
     name: "Allen Roy",
     location: "Old Cutler Rd",
     avatar: "https://images.unsplash.com/photo-1534308143481-c55f00be8bd7?q=80&w=2688&auto=format&fit=crop",
   });
+
+  useEffect(() => {
+    const fetchBarbers = async () => {
+      setIsLoading(true);
+
+      try {
+        const { data, error } = await supabase
+          .from("barbers")
+          .select("*");
+
+        if (error) {
+          throw error;
+        }
+
+        setBarbers(data || []);
+      } catch (error) {
+        console.error("Error fetching barbers:", error);
+        toast({
+          title: "Error",
+          description: "Could not load barber information.",
+          variant: "destructive",
+        });
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchBarbers();
+  }, [toast]);
 
   return (
     <Layout>
@@ -68,18 +86,28 @@ const Index = () => {
         </div>
 
         {/* Barbers List */}
-        <div className="mt-6">
-          {BARBER_DATA.map((barber) => (
-            <BarberCard
-              key={barber.id}
-              id={barber.id}
-              name={barber.name}
-              image={barber.image}
-              location={barber.location}
-              specialty={barber.specialty}
-            />
-          ))}
-        </div>
+        {isLoading ? (
+          <div className="flex justify-center mt-12">
+            <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-barber-accent"></div>
+          </div>
+        ) : (
+          <div className="mt-6">
+            {barbers.length === 0 ? (
+              <p className="text-center text-gray-400 mt-8">No barbers found</p>
+            ) : (
+              barbers.map((barber) => (
+                <BarberCard
+                  key={barber.id}
+                  id={barber.id}
+                  name={barber.name}
+                  image={barber.image}
+                  location={barber.location}
+                  specialty={barber.specialty}
+                />
+              ))
+            )}
+          </div>
+        )}
       </div>
     </Layout>
   );

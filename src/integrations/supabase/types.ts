@@ -9,7 +9,121 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
-      [_ in never]: never
+      appointments: {
+        Row: {
+          appointment_date: string
+          appointment_time: string
+          barber_id: string
+          barber_name: string
+          created_at: string | null
+          id: string
+          location: string
+          price: string
+          service: string
+          status: string
+          user_id: string | null
+        }
+        Insert: {
+          appointment_date: string
+          appointment_time: string
+          barber_id: string
+          barber_name: string
+          created_at?: string | null
+          id?: string
+          location: string
+          price: string
+          service: string
+          status: string
+          user_id?: string | null
+        }
+        Update: {
+          appointment_date?: string
+          appointment_time?: string
+          barber_id?: string
+          barber_name?: string
+          created_at?: string | null
+          id?: string
+          location?: string
+          price?: string
+          service?: string
+          status?: string
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "appointments_barber_id_fkey"
+            columns: ["barber_id"]
+            isOneToOne: false
+            referencedRelation: "barbers"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      barbers: {
+        Row: {
+          description: string | null
+          id: string
+          image: string
+          location: string
+          name: string
+          rating: number | null
+          specialty: string | null
+        }
+        Insert: {
+          description?: string | null
+          id?: string
+          image: string
+          location: string
+          name: string
+          rating?: number | null
+          specialty?: string | null
+        }
+        Update: {
+          description?: string | null
+          id?: string
+          image?: string
+          location?: string
+          name?: string
+          rating?: number | null
+          specialty?: string | null
+        }
+        Relationships: []
+      }
+      services: {
+        Row: {
+          barber_id: string
+          duration: number
+          id: string
+          is_popular: boolean | null
+          name: string
+          price: number
+        }
+        Insert: {
+          barber_id: string
+          duration: number
+          id?: string
+          is_popular?: boolean | null
+          name: string
+          price: number
+        }
+        Update: {
+          barber_id?: string
+          duration?: number
+          id?: string
+          is_popular?: boolean | null
+          name?: string
+          price?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "services_barber_id_fkey"
+            columns: ["barber_id"]
+            isOneToOne: false
+            referencedRelation: "barbers"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never
