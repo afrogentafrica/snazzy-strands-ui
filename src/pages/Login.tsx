@@ -1,6 +1,6 @@
 
-import React, { useState } from "react";
-import { useNavigate, Link } from "react-router-dom";
+import React, { useState, useEffect } from "react";
+import { useNavigate, Link, useLocation } from "react-router-dom";
 import Layout from "@/components/layout/Layout";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -11,8 +11,17 @@ const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-  const { signIn } = useAuth();
+  const { signIn, user } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
+  const from = location.state?.from?.pathname || "/";
+
+  // If user is already logged in, redirect them
+  useEffect(() => {
+    if (user) {
+      navigate(from, { replace: true });
+    }
+  }, [user, navigate, from]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -20,7 +29,7 @@ const Login = () => {
     
     try {
       await signIn(email, password);
-      navigate("/");
+      navigate(from, { replace: true });
     } catch (error) {
       console.error("Error during sign in:", error);
     } finally {
@@ -93,7 +102,7 @@ const Login = () => {
               disabled={isLoading}
             >
               {isLoading ? "Signing in..." : "Sign In"}
-              <LogIn className="w-5 h-5" />
+              <LogIn className="w-5 h-5 ml-2" />
             </Button>
           </form>
 
@@ -104,6 +113,14 @@ const Login = () => {
                 Sign Up
               </Link>
             </p>
+            
+            {location.pathname === "/admin" && (
+              <div className="mt-4 p-4 bg-barber-card rounded-md">
+                <p className="text-sm text-barber-accent">
+                  Administrator access required. Please login with your admin credentials.
+                </p>
+              </div>
+            )}
           </div>
         </div>
       </div>

@@ -10,6 +10,7 @@ import AdminServiceForm from "@/components/admin/AdminServiceForm";
 import AdminServiceGrid from "@/components/admin/AdminServiceGrid";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
+import { useNavigate } from "react-router-dom";
 
 interface Service {
   id: string;
@@ -24,15 +25,16 @@ const AdminDashboard = () => {
   const { toast } = useToast();
   const queryClient = useQueryClient();
   const { user } = useAuth();
+  const navigate = useNavigate();
   const [selectedService, setSelectedService] = useState<Service | null>(null);
   const [isFormOpen, setIsFormOpen] = useState(false);
 
   // Redirect if not authenticated
   useEffect(() => {
     if (!user) {
-      window.location.href = "/login";
+      navigate("/login");
     }
-  }, [user]);
+  }, [user, navigate]);
   
   // Fetch services
   const { data: services, isLoading, error } = useQuery({
@@ -44,7 +46,8 @@ const AdminDashboard = () => {
 
       if (error) throw error;
       return data as Service[];
-    }
+    },
+    enabled: !!user // Only fetch if user is authenticated
   });
   
   // Delete service mutation
@@ -97,6 +100,17 @@ const AdminDashboard = () => {
     setSelectedService(null);
     setIsFormOpen(true);
   };
+
+  // If not authenticated, show loading state
+  if (!user) {
+    return (
+      <Layout>
+        <div className="flex items-center justify-center h-96">
+          <p className="text-lg">Redirecting to login...</p>
+        </div>
+      </Layout>
+    );
+  }
 
   return (
     <Layout>
