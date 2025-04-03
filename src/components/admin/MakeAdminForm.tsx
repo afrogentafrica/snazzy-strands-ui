@@ -18,15 +18,15 @@ const MakeAdminForm = () => {
     setSuccess(false);
 
     try {
-      // Find user ID from email using RPC (since we can't directly query auth.users)
-      const { data: userData, error: userError } = await supabase
+      // Find user ID from email using our custom RPC function
+      const { data: userId, error: userError } = await supabase
         .rpc('get_user_id_by_email', { email_input: email });
       
       if (userError) {
         throw userError;
       }
 
-      if (!userData) {
+      if (!userId) {
         toast({
           title: "User not found",
           description: `No user with email ${email} exists in the system.`,
@@ -39,7 +39,7 @@ const MakeAdminForm = () => {
       const { error: insertError } = await supabase
         .from('user_roles')
         .insert({
-          user_id: userData,
+          user_id: userId,
           role: 'admin'
         });
 
