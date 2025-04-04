@@ -42,7 +42,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     const { data, error } = await supabase
       .rpc('has_role', { 
         user_id: user.id,
-        role: role
+        role: role // Role is passed as a string parameter
       });
     
     if (error) {

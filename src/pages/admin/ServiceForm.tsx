@@ -30,7 +30,8 @@ const ServiceForm = () => {
           </CardHeader>
           <CardContent>
             <AdminServiceForm 
-              onClose={() => navigate("/admin")} 
+              onClose={() => navigate("/admin")}
+              service={null}  // Explicitly pass null to be clear
             />
           </CardContent>
         </Card>

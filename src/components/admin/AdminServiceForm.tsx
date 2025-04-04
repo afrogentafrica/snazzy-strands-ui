@@ -1,4 +1,3 @@
-
 import React from "react";
 import { useForm } from "react-hook-form";
 import { useMutation, useQueryClient, useQuery } from "@tanstack/react-query";
@@ -36,7 +35,7 @@ interface FormValues {
 }
 
 interface AdminServiceFormProps {
-  service: Service | null;
+  service?: Service | null;
   onClose: () => void;
 }
 
@@ -44,7 +43,6 @@ const AdminServiceForm: React.FC<AdminServiceFormProps> = ({ service, onClose })
   const { toast } = useToast();
   const queryClient = useQueryClient();
   
-  // Fetch barbers for dropdown
   const { data: barbers } = useQuery({
     queryKey: ['barbers'],
     queryFn: async () => {
@@ -57,7 +55,6 @@ const AdminServiceForm: React.FC<AdminServiceFormProps> = ({ service, onClose })
     }
   });
 
-  // Initialize form with default values
   const form = useForm<FormValues>({
     defaultValues: service ? {
       name: service.name,
@@ -74,11 +71,9 @@ const AdminServiceForm: React.FC<AdminServiceFormProps> = ({ service, onClose })
     }
   });
   
-  // Create or update service mutation
   const mutation = useMutation({
     mutationFn: async (values: FormValues) => {
       if (service) {
-        // Update existing service
         const { error } = await supabase
           .from('services')
           .update({
@@ -92,7 +87,6 @@ const AdminServiceForm: React.FC<AdminServiceFormProps> = ({ service, onClose })
         
         if (error) throw error;
       } else {
-        // Create new service
         const { error } = await supabase
           .from('services')
           .insert({
@@ -123,7 +117,6 @@ const AdminServiceForm: React.FC<AdminServiceFormProps> = ({ service, onClose })
     },
   });
   
-  // Submit handler
   const onSubmit = (values: FormValues) => {
     mutation.mutate(values);
   };
