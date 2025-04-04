@@ -4,6 +4,7 @@ import { Home, MapPin, CalendarCheck, User, Search } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useLocation, Link } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
+import Header from "./Header";
 
 type LayoutProps = {
   children: React.ReactNode;
@@ -17,6 +18,7 @@ const Layout = ({ children, hideNav = false }: LayoutProps) => {
 
   return (
     <div className="max-w-md mx-auto min-h-screen bg-barber-dark text-white relative">
+      <Header />
       <div className="pb-20">{children}</div>
 
       {!hideNav && (
