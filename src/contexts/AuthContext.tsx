@@ -4,6 +4,8 @@ import { Session, User } from '@supabase/supabase-js';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 
+type Role = "admin" | "user" | string;
+
 type AuthContextType = {
   session: Session | null;
   user: User | null;
@@ -42,7 +44,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     const { data, error } = await supabase
       .rpc('has_role', { 
         user_id: user.id,
-        role: role // Role is passed as a string parameter
+        role: role
       });
     
     if (error) {
