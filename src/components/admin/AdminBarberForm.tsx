@@ -30,16 +30,19 @@ const barberFormSchema = z.object({
 
 type BarberFormValues = z.infer<typeof barberFormSchema>;
 
+// Define the type for barber data structure
+type BarberData = {
+  id?: string;
+  name: string;
+  image: string;
+  location: string;
+  specialty?: string;
+  description?: string;
+  rating?: number;
+}
+
 interface AdminBarberFormProps {
-  barber: {
-    id?: string;
-    name: string;
-    image: string;
-    location: string;
-    specialty?: string;
-    description?: string;
-    rating?: number;
-  } | null;
+  barber: BarberData | null;
   onClose: () => void;
 }
 
@@ -63,20 +66,30 @@ const AdminBarberForm: React.FC<AdminBarberFormProps> = ({ barber, onClose }) =>
   // Create or update barber mutation
   const barberMutation = useMutation({
     mutationFn: async (values: BarberFormValues) => {
+      // Ensure all required fields are present
+      const barberData: BarberData = {
+        name: values.name,
+        image: values.image,
+        location: values.location,
+        specialty: values.specialty,
+        description: values.description,
+        rating: values.rating,
+      };
+
       if (barber?.id) {
         // Update existing barber
         const { error } = await supabase
           .from("barbers")
-          .update(values)
+          .update(barberData)
           .eq("id", barber.id);
 
         if (error) throw error;
-        return { ...values, id: barber.id };
+        return { ...barberData, id: barber.id };
       } else {
-        // Create new barber - FIX: Pass values as a single object, not an array
+        // Create new barber
         const { data, error } = await supabase
           .from("barbers")
-          .insert(values)
+          .insert(barberData)
           .select();
 
         if (error) throw error;
