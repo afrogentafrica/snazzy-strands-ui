@@ -5,6 +5,8 @@ import FilterTabs from "@/components/barber/FilterTabs";
 import BarberCard from "@/components/barber/BarberCard";
 import { supabase } from "@/lib/supabase";
 import { useToast } from "@/hooks/use-toast";
+import { useAuth } from "@/contexts/AuthContext";
+import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 
 type Barber = {
   id: string;
@@ -21,11 +23,7 @@ const Index = () => {
   const [barbers, setBarbers] = useState<Barber[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const { toast } = useToast();
-  const [user] = useState({
-    name: "Allen Roy",
-    location: "Old Cutler Rd",
-    avatar: "https://images.unsplash.com/photo-1534308143481-c55f00be8bd7?q=80&w=2688&auto=format&fit=crop",
-  });
+  const { user } = useAuth();
 
   useEffect(() => {
     const fetchBarbers = async () => {
@@ -59,22 +57,20 @@ const Index = () => {
   return (
     <Layout>
       <div className="p-6 pt-8">
-        {/* User header */}
-        <div className="flex items-center gap-3 mb-6">
-          <div className="w-10 h-10 rounded-full overflow-hidden">
-            <img
-              src={user.avatar}
-              alt={user.name}
-              className="w-full h-full object-cover"
-            />
-          </div>
-          <div>
-            <h2 className="font-bold text-lg">{user.name}</h2>
-            <div className="flex items-center text-xs text-gray-400">
-              <span>{user.location}</span>
+        {/* User header - only shown when user is logged in */}
+        {user && (
+          <div className="flex items-center gap-3 mb-6">
+            <Avatar className="w-10 h-10 border-2 border-barber-accent">
+              <AvatarImage src={user.user_metadata?.avatar_url} alt={user.email || ""} />
+              <AvatarFallback>{user.email?.charAt(0).toUpperCase() || "U"}</AvatarFallback>
+            </Avatar>
+            <div>
+              <h2 className="font-bold text-lg">
+                {user.user_metadata?.name || user.email?.split('@')[0] || "User"}
+              </h2>
             </div>
           </div>
-        </div>
+        )}
 
         {/* Filters */}
         <div className="mb-6">
