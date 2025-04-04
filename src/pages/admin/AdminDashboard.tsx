@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import Layout from "@/components/layout/Layout";
 import AdminServiceTab from "./tabs/AdminServiceTab";
 import AdminUserTab from "./tabs/AdminUserTab";
+import AdminBarberTab from "./tabs/AdminBarberTab";
 import { useAuth } from "@/contexts/AuthContext";
 import AccessDeniedView from "./components/AccessDeniedView";
 import LoadingView from "./components/LoadingView";
@@ -62,13 +63,18 @@ const AdminDashboard = () => {
         </header>
 
         <Tabs value={activeTab} onValueChange={setActiveTab} className="mb-6">
-          <TabsList className="grid w-full grid-cols-2">
+          <TabsList className="grid w-full grid-cols-3">
             <TabsTrigger value="services">Services</TabsTrigger>
+            <TabsTrigger value="barbers">Stylists</TabsTrigger>
             <TabsTrigger value="users">Users & Access</TabsTrigger>
           </TabsList>
 
           <TabsContent value="services">
             <AdminServiceTab />
+          </TabsContent>
+
+          <TabsContent value="barbers">
+            <AdminBarberTab />
           </TabsContent>
 
           <TabsContent value="users">
