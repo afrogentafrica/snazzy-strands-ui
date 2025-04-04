@@ -17,7 +17,6 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { Switch } from "@/components/ui/switch";
 
 // Define the schema for the form
 const barberFormSchema = z.object({
@@ -74,10 +73,10 @@ const AdminBarberForm: React.FC<AdminBarberFormProps> = ({ barber, onClose }) =>
         if (error) throw error;
         return { ...values, id: barber.id };
       } else {
-        // Create new barber
+        // Create new barber - FIX: Pass values as a single object, not an array
         const { data, error } = await supabase
           .from("barbers")
-          .insert([values])
+          .insert(values)
           .select();
 
         if (error) throw error;
