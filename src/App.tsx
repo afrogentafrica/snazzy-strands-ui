@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
@@ -14,10 +15,10 @@ import { AuthProvider } from './contexts/AuthContext';
 import { Toaster } from "@/components/ui/toaster"
 import AdminDashboard from './pages/AdminDashboard';
 import ServiceForm from './pages/ServiceForm';
+import AdminSetup from './pages/AdminSetup';
 
 const queryClient = new QueryClient();
 
-// Update the routes to include the new ServiceForm page
 function App() {
   return (
     <BrowserRouter>
@@ -35,6 +36,7 @@ function App() {
               <Route path="/appointments" element={<Appointments />} />
               <Route path="/admin" element={<AdminDashboard />} />
               <Route path="/admin/service" element={<ServiceForm />} />
+              <Route path="/admin/setup" element={<AdminSetup />} />
               <Route path="*" element={<NotFound />} />
             </Routes>
           </ThemeProvider>

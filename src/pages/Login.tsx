@@ -5,7 +5,7 @@ import Layout from "@/components/layout/Layout";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useAuth } from "@/contexts/AuthContext";
-import { ArrowLeft, Mail, Lock, LogIn } from "lucide-react";
+import { ArrowLeft, Mail, Lock, LogIn, Shield } from "lucide-react";
 
 const Login = () => {
   const [email, setEmail] = useState("");
@@ -114,13 +114,25 @@ const Login = () => {
               </Link>
             </p>
             
-            {location.pathname === "/admin" && (
-              <div className="mt-4 p-4 bg-barber-card rounded-md">
-                <p className="text-sm text-barber-accent">
-                  Administrator access required. Please login with your admin credentials.
-                </p>
+            <div className="mt-4 flex flex-col gap-2">
+              {location.pathname === "/admin" && (
+                <div className="p-4 bg-barber-card rounded-md">
+                  <p className="text-sm text-barber-accent">
+                    Administrator access required. Please login with your admin credentials.
+                  </p>
+                </div>
+              )}
+              
+              <div className="border-t border-gray-200 pt-4 mt-2">
+                <Link 
+                  to="/admin/setup" 
+                  className="flex items-center justify-center gap-2 text-sm text-barber-accent hover:underline"
+                >
+                  <Shield className="w-4 h-4" />
+                  First-time admin setup
+                </Link>
               </div>
-            )}
+            </div>
           </div>
         </div>
       </div>
