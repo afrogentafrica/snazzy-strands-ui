@@ -1,7 +1,7 @@
 
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
-import { Menu, X, Home, MapPin, CalendarCheck, User, Search } from "lucide-react";
+import { Menu, X } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useAuth } from "@/contexts/AuthContext";
 import { Button } from "@/components/ui/button";
@@ -12,23 +12,6 @@ const Header = () => {
 
   const toggleMenu = () => setIsMenuOpen(!isMenuOpen);
   const closeMenu = () => setIsMenuOpen(false);
-
-  const menuItems = [
-    { name: "Home", href: "/", icon: Home },
-    { name: "Discover", href: "/discover", icon: MapPin },
-    { name: "Search", href: "/search", icon: Search },
-    { name: "Appointments", href: "/appointments", icon: CalendarCheck },
-    { name: "Profile", href: user ? "/profile" : "/login", icon: User },
-  ];
-
-  // Add admin link if user is admin
-  if (isAdmin) {
-    menuItems.push({
-      name: "Admin",
-      href: "/admin",
-      icon: User,
-    });
-  }
 
   return (
     <header className="bg-barber-dark text-white sticky top-0 z-50 border-b border-barber-card">
@@ -46,42 +29,65 @@ const Header = () => {
         >
           {isMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
         </Button>
-
-        {/* Desktop navigation */}
-        <nav className="hidden md:flex items-center gap-6">
-          {menuItems.map((item) => (
-            <Link
-              key={item.name}
-              to={item.href}
-              className="text-sm font-medium hover:text-barber-accent transition-colors"
-            >
-              {item.name}
-            </Link>
-          ))}
-          
-          {!user && (
-            <Button asChild variant="outline" size="sm">
-              <Link to="/login">Login</Link>
-            </Button>
-          )}
-        </nav>
       </div>
 
       {/* Mobile menu */}
       {isMenuOpen && (
         <div className="md:hidden bg-barber-card animate-fade-in">
           <nav className="flex flex-col p-4">
-            {menuItems.map((item) => (
+            <Link
+              to="/"
+              className="flex items-center gap-3 py-3 px-4 hover:bg-barber-dark rounded-md"
+              onClick={closeMenu}
+            >
+              <span>Home</span>
+            </Link>
+            <Link
+              to="/discover"
+              className="flex items-center gap-3 py-3 px-4 hover:bg-barber-dark rounded-md"
+              onClick={closeMenu}
+            >
+              <span>Discover</span>
+            </Link>
+            <Link
+              to="/search"
+              className="flex items-center gap-3 py-3 px-4 hover:bg-barber-dark rounded-md"
+              onClick={closeMenu}
+            >
+              <span>Search</span>
+            </Link>
+            <Link
+              to={user ? "/appointments" : "/login"}
+              className="flex items-center gap-3 py-3 px-4 hover:bg-barber-dark rounded-md"
+              onClick={closeMenu}
+            >
+              <span>Appointments</span>
+            </Link>
+            <Link
+              to={user ? "/profile" : "/login"}
+              className="flex items-center gap-3 py-3 px-4 hover:bg-barber-dark rounded-md"
+              onClick={closeMenu}
+            >
+              <span>Profile</span>
+            </Link>
+            {isAdmin && (
               <Link
-                key={item.name}
-                to={item.href}
+                to="/admin"
                 className="flex items-center gap-3 py-3 px-4 hover:bg-barber-dark rounded-md"
                 onClick={closeMenu}
               >
-                <item.icon className="h-5 w-5 text-barber-accent" />
-                <span>{item.name}</span>
+                <span>Admin</span>
               </Link>
-            ))}
+            )}
+            {!user && (
+              <Link
+                to="/login"
+                className="flex items-center gap-3 py-3 px-4 mt-2 bg-barber-accent text-barber-dark rounded-md"
+                onClick={closeMenu}
+              >
+                <span>Login</span>
+              </Link>
+            )}
           </nav>
         </div>
       )}

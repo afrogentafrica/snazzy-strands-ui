@@ -17,36 +17,38 @@ const Layout = ({ children, hideNav = false }: LayoutProps) => {
   const isActive = (path: string) => location.pathname === path;
 
   return (
-    <div className="max-w-md mx-auto min-h-screen bg-barber-dark text-white relative">
-      <Header />
-      <div className="pb-20">{children}</div>
+    <div className="min-h-screen bg-barber-dark text-white">
+      <div className="max-w-md mx-auto relative">
+        <Header />
+        <div className="pb-20">{children}</div>
 
-      {!hideNav && (
-        <nav className="fixed bottom-0 left-0 right-0 max-w-md mx-auto bg-barber-card px-6 py-3 flex justify-between items-center rounded-t-3xl border-t border-barber-dark z-50">
-          <NavItem icon={<Home className="w-5 h-5" />} isActive={isActive("/")} href="/" />
-          <NavItem icon={<MapPin className="w-5 h-5" />} isActive={isActive("/discover")} href="/discover" />
-          <NavItem
-            icon={
-              <div className="w-10 h-10 rounded-full bg-barber-accent flex items-center justify-center">
-                <Search className="w-5 h-5 text-barber-dark" />
-              </div>
-            }
-            isActive={false}
-            href="/search"
-            className="mb-4"
-          />
-          <NavItem 
-            icon={<CalendarCheck className="w-5 h-5" />} 
-            isActive={isActive("/appointments")} 
-            href={user ? "/appointments" : "/login"} 
-          />
-          <NavItem 
-            icon={<User className="w-5 h-5" />} 
-            isActive={isActive("/profile")} 
-            href={user ? "/profile" : "/login"} 
-          />
-        </nav>
-      )}
+        {!hideNav && (
+          <nav className="fixed bottom-0 left-0 right-0 max-w-md mx-auto bg-barber-card px-6 py-3 flex justify-between items-center rounded-t-3xl border-t border-barber-dark z-50">
+            <NavItem icon={<Home className="w-5 h-5" />} isActive={isActive("/")} href="/" />
+            <NavItem icon={<MapPin className="w-5 h-5" />} isActive={isActive("/discover")} href="/discover" />
+            <NavItem
+              icon={
+                <div className="w-10 h-10 rounded-full bg-barber-accent flex items-center justify-center">
+                  <Search className="w-5 h-5 text-barber-dark" />
+                </div>
+              }
+              isActive={false}
+              href="/search"
+              className="mb-4"
+            />
+            <NavItem 
+              icon={<CalendarCheck className="w-5 h-5" />} 
+              isActive={isActive("/appointments")} 
+              href={user ? "/appointments" : "/login"} 
+            />
+            <NavItem 
+              icon={<User className="w-5 h-5" />} 
+              isActive={isActive("/profile")} 
+              href={user ? "/profile" : "/login"} 
+            />
+          </nav>
+        )}
+      </div>
     </div>
   );
 };
