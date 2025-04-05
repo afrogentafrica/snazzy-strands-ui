@@ -17,19 +17,28 @@ export const useAdminSetup = () => {
   useEffect(() => {
     const checkAdminSetup = async () => {
       try {
-        // Use a direct count query to avoid the recursive policy issue
-        const { count, error } = await supabase
+        // Use a direct count query to check for admin users
+        const { data, error } = await supabase
           .from("user_roles")
           .select("*", { count: 'exact', head: true })
           .eq("role", "admin");
 
         if (error) {
           console.error("Error checking admin setup:", error);
-          throw error;
+          // Instead of throwing the error, handle it gracefully
+          toast({
+            title: "Error",
+            description: "Could not check if admin setup is available",
+            variant: "destructive",
+          });
+          // Assume setup is not available to prevent potential privilege escalation
+          setIsSetupAvailable(false);
+          setIsLoading(false);
+          return;
         }
         
         // If no admins exist, setup is available
-        setIsSetupAvailable(count === 0);
+        setIsSetupAvailable(data.count === 0);
       } catch (error) {
         console.error("Error checking admin setup:", error);
         toast({
@@ -37,6 +46,8 @@ export const useAdminSetup = () => {
           description: "Could not check if admin setup is available",
           variant: "destructive",
         });
+        // Assume setup is not available to prevent potential privilege escalation
+        setIsSetupAvailable(false);
       } finally {
         setIsLoading(false);
       }
