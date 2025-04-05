@@ -18,7 +18,7 @@ export const useAdminSetup = () => {
     const checkAdminSetup = async () => {
       try {
         // Use a direct count query to check for admin users
-        const { count, error } = await supabase
+        const { data, error } = await supabase
           .from("user_roles")
           .select("*", { count: 'exact', head: true })
           .eq("role", "admin");
@@ -37,8 +37,12 @@ export const useAdminSetup = () => {
           return;
         }
         
+        // Check if count is available as a property of the response
+        const adminCount = data?.count !== undefined ? data.count : 0;
+        console.log("Admin count:", adminCount);
+        
         // If no admins exist, setup is available
-        setIsSetupAvailable(count === 0);
+        setIsSetupAvailable(adminCount === 0);
       } catch (error) {
         console.error("Error checking admin setup:", error);
         toast({
