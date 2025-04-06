@@ -153,6 +153,10 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      check_admin_exists: {
+        Args: Record<PropertyKey, never>
+        Returns: boolean
+      }
       get_user_id_by_email: {
         Args: {
           email_input: string
