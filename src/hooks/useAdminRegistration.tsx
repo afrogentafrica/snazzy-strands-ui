@@ -18,11 +18,10 @@ export const useAdminRegistration = () => {
     const checkFirstAdmin = async () => {
       try {
         setError(null);
-        const { data, error, count } = await supabase
-          .from("user_roles")
-          .select("*", { count: 'exact' })
-          .eq("role", "admin");
-
+        
+        // Using a direct RPC function call to avoid RLS policy issues
+        const { data, error } = await supabase.rpc('check_admin_exists');
+        
         if (error) {
           console.error("Error checking admin setup:", error);
           setError("Could not check if admin registration is available");
@@ -33,9 +32,9 @@ export const useAdminRegistration = () => {
           });
           setIsFirstAdmin(false);
         } else {
-          // The count should be directly available from the response when using count: 'exact'
-          console.log("Admin count:", count);
-          setIsFirstAdmin(count === 0);
+          // The function returns true if admins exist, false otherwise
+          console.log("Admin exists?", data);
+          setIsFirstAdmin(!data); // If no admins exist, this is the first admin
         }
       } catch (error: any) {
         console.error("Error:", error);

@@ -1,9 +1,8 @@
 
-import React from "react";
+import React, { useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import Layout from "@/components/layout/Layout";
-import { ArrowLeft, Shield } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { ArrowLeft } from "lucide-react";
 import { useAdminRegistration } from "@/hooks/useAdminRegistration";
 import AdminAlreadyExists from "@/components/admin/setup/AdminAlreadyExists";
 import LoadingState from "@/components/admin/setup/LoadingState";
@@ -12,15 +11,20 @@ import AdminSetupForm from "@/components/admin/setup/AdminSetupForm";
 import AdminInfoMessage from "@/components/admin/setup/AdminInfoMessage";
 
 const AdminRegister = () => {
+  const [retryCounter, setRetryCounter] = React.useState(0);
   const { isFirstAdmin, isLoading, error } = useAdminRegistration();
   const navigate = useNavigate();
+
+  const handleRetry = useCallback(() => {
+    setRetryCounter(prevCounter => prevCounter + 1);
+  }, []);
 
   if (isLoading) {
     return <LoadingState />;
   }
 
   if (error) {
-    return <ErrorState errorMessage={error} />;
+    return <ErrorState errorMessage={error} onRetry={handleRetry} />;
   }
 
   if (!isFirstAdmin) {

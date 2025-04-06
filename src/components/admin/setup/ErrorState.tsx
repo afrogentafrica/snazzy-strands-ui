@@ -1,14 +1,15 @@
 
 import React from "react";
 import { useNavigate } from "react-router-dom";
-import { Shield } from "lucide-react";
+import { Shield, RefreshCw } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 type ErrorStateProps = {
   errorMessage: string;
+  onRetry?: () => void;
 };
 
-const ErrorState = ({ errorMessage }: ErrorStateProps) => {
+const ErrorState = ({ errorMessage, onRetry }: ErrorStateProps) => {
   const navigate = useNavigate();
   
   return (
@@ -22,9 +23,17 @@ const ErrorState = ({ errorMessage }: ErrorStateProps) => {
       <p className="text-center mb-6">
         There was an error checking admin registration availability.
       </p>
-      <Button onClick={() => navigate("/admin/login")} className="barber-button">
-        Go to Admin Login
-      </Button>
+      <div className="flex flex-col sm:flex-row gap-3">
+        {onRetry && (
+          <Button onClick={onRetry} className="barber-button">
+            <RefreshCw className="w-4 h-4 mr-2" />
+            Retry
+          </Button>
+        )}
+        <Button onClick={() => navigate("/admin/login")} className="barber-button">
+          Go to Admin Login
+        </Button>
+      </div>
     </div>
   );
 };
