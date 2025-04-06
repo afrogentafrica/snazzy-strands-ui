@@ -1,11 +1,10 @@
-
 import React, { useState, useEffect } from "react";
 import { useNavigate, Link, useLocation } from "react-router-dom";
 import Layout from "@/components/layout/Layout";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useAuth } from "@/contexts/AuthContext";
-import { ArrowLeft, Mail, Lock, LogIn, Shield } from "lucide-react";
+import { ArrowLeft, Mail, Lock, LogIn, Shield, UserPlus } from "lucide-react";
 
 const Login = () => {
   const [email, setEmail] = useState("");
@@ -16,7 +15,6 @@ const Login = () => {
   const location = useLocation();
   const from = location.state?.from?.pathname || "/";
 
-  // If user is already logged in, redirect them
   useEffect(() => {
     if (user) {
       navigate(from, { replace: true });
@@ -40,7 +38,6 @@ const Login = () => {
   return (
     <Layout hideNav>
       <div className="p-6">
-        {/* Header */}
         <div className="flex items-center justify-between mb-6">
           <button 
             onClick={() => navigate(-1)} 
@@ -49,7 +46,7 @@ const Login = () => {
             <ArrowLeft className="w-5 h-5" />
           </button>
           <h1 className="font-bold text-xl">Sign In</h1>
-          <div className="w-9"></div> {/* Empty div for flex spacing */}
+          <div className="w-9"></div>
         </div>
 
         <div className="mt-10">
