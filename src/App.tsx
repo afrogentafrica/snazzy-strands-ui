@@ -15,7 +15,8 @@ import { AuthProvider } from './contexts/AuthContext';
 import { Toaster } from "@/components/ui/toaster"
 import AdminDashboard from './pages/AdminDashboard';
 import ServiceForm from './pages/ServiceForm';
-import AdminSetup from './pages/AdminSetup';
+import AdminLogin from './pages/admin/AdminLogin';
+import AdminRegister from './pages/admin/AdminRegister';
 
 const queryClient = new QueryClient();
 
@@ -36,7 +37,8 @@ function App() {
               <Route path="/appointments" element={<Appointments />} />
               <Route path="/admin" element={<AdminDashboard />} />
               <Route path="/admin/service" element={<ServiceForm />} />
-              <Route path="/admin/setup" element={<AdminSetup />} />
+              <Route path="/admin/login" element={<AdminLogin />} />
+              <Route path="/admin/register" element={<AdminRegister />} />
               <Route path="*" element={<NotFound />} />
             </Routes>
           </ThemeProvider>
